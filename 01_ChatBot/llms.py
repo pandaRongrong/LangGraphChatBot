@@ -33,6 +33,11 @@ MODEL_CONFIGS = {
         "base_url": "http://localhost:11434/v1",
         "api_key": "ollama",
         "model": "deepseek-r1:14b"
+    },
+    "deepseek": {
+        "base_url": "https://api.deepseek.com/v1",
+        "api_key": "sk-dcb9d486b02e496fac9237b2e219bc61",
+        "model": "deepseek-chat"
     }
 }
 

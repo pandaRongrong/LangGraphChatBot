@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 MODEL_CONFIGS = {
     "openai": {
         "base_url": "https://yunwu.ai/v1",
-        "api_key": "sk-3QztQa9rwwKc9MjkgjtnK0GjTdtnVjDkEswHcX0uEm5uQB1E",
+        "api_key": "sk-zuPaYwzOqhR7DOPbHkRCT1yuThh18k57OIhe43XH5IfVMgTp",
         "chat_model": "gpt-4o-mini",
         "embedding_model": "text-embedding-3-small"
 

@@ -95,17 +95,18 @@ def create_graph(llm, in_memory_store) -> StateGraph:
             memories = store.search(namespace, query=str(state["messages"][-1].content))
             info = "\n".join([d.value["data"] for d in memories])
             # 将检索到的知识拼接到系统prompt
-            system_msg = f"你是一个推荐手机流量套餐的客服代表，你的名字由用户指定。用户指定你的名称为: {info}"
+            system_msg = f"你是和用户对话的助手，用户需要你记忆的信息为: {info}"
             # 获取state中的消息进行消息过滤后存储新的记忆
             last_message = state["messages"][-1]
-            if "记住" in last_message.content.lower():
-                memory = "你的名字是南哥。"
+            if "记住：" in last_message.content.lower():
+                memory = last_message.content.replace("记住：", "", 1)
                 store.put(namespace, str(uuid.uuid4()), {"data": memory})
             # 2、短期记忆逻辑 进行消息过滤
             messages = filter_messages(state["messages"])
             # 3、调用LLM
+            messageList = [{"role": "system", "content": system_msg}] + messages
             response = llm.invoke(
-                [{"role": "system", "content": system_msg}] + messages
+                messageList
             )
             return {"messages": [response]}
 
@@ -222,8 +223,8 @@ async def chat_completions(request: ChatCompletionRequest):
         config = {"configurable": {"thread_id": request.userId+"@@"+request.conversationId, "user_id": request.userId}}
         logger.info(f"用户当前会话信息: {config}")
 
-        prompt_template_system = PromptTemplate.from_file(PROMPT_TEMPLATE_TXT_SYS)
-        prompt_template_user = PromptTemplate.from_file(PROMPT_TEMPLATE_TXT_USER)
+        prompt_template_system = PromptTemplate.from_file(PROMPT_TEMPLATE_TXT_SYS, encoding='utf-8')
+        prompt_template_user = PromptTemplate.from_file(PROMPT_TEMPLATE_TXT_USER, encoding='utf-8')
         prompt = [
             {"role": "system", "content": prompt_template_system.template},
             {"role": "user", "content": prompt_template_user.template.format(query=query_prompt)}
